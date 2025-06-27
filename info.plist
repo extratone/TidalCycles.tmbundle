@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>name</key>
+    <string>TidalCycles</string>
+    <key>uuid</key>
+    <string>E4E3C9E2-7360-491A-AD6E-789E2B389A83</string>
+    <key>ordering</key>
+    <array>
+        <string>E4E3C9E2-7360-491A-AD6E-789E2B389A83</string> <string>A0EFE414-A3D8-4554-B52A-60FF493D144A</string> <string>98D8055E-355D-47C7-947F-DCAD7980894C</string> <string>1E9F1A44-2454-4734-92B3-78F932152CD9</string> <string>63D9C3D6-5A04-4581-988B-D35070A67897</string> <string>3B1E4A34-521A-4B6A-B561-B9D8745E544A</string> </array>
+    <key>mainMenu</key>
+    <dict>
+        <key>name</key>
+        <string>TidalCycles</string>
+        <key>items</key>
+        <array>
+            <string>A0EFE414-A3D8-4554-B52A-60FF493D144A</string> <string>98D8055E-355D-47C7-947F-DCAD7980894C</string> <string>1E9F1A44-2454-4734-92B3-78F932152CD9</string> <string>63D9C3D6-5A04-4581-988B-D35070A67897</string> <string>3B1E4A34-521A-4B6A-B561-B9D8745E544A</string> </array>
+    </dict>
+</dict>
+</plist>
