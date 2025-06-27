@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Evaluate Block</string>
+	<key>uuid</key>
+	<string>1E9F1A44-2454-4734-92B3-78F932152CD9</string>
+	<key>keyEquivalent</key>
+	<string>^\r</string> <key>scope</key>
+	<string>source.tidal</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>fallbackInput</key>
+    <string>document</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>command</key>
+	<string>#!/bin/bash
+PIPE_PATH="/tmp/tidal_tm_pipe_$(id -u)"
+if [ ! -p "$PIPE_PATH" ]; then
+    osascript -e 'display notification "Tidal process not running. Please start it first." with title "TidalCycles Error"'
+    exit 1
+fi
+
+# Read the entire input (selection or document) from stdin
+BLOCK_CONTENT=$(cat)
+
+# Send the expression wrapped in multiline markers, line by line
+echo ":{" &gt; "$PIPE_PATH"
+echo "$BLOCK_CONTENT" | while IFS= read -r line; do
+    echo "$line" &gt; "$PIPE_PATH"
+done
+echo ":}" &gt; "$PIPE_PATH"
+</string>
+</dict>
+</plist>

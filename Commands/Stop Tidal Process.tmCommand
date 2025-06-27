@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Stop Tidal Process</string>
+	<key>uuid</key>
+	<string>3B1E4A34-521A-4B6A-B561-B9D8745E544A</string>
+	<key>scope</key>
+	<string>source.tidal</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>command</key>
+	<string>#!/bin/bash
+PIPE_PATH="/tmp/tidal_tm_pipe_$(id -u)"
+PID_FILE="/tmp/tidal_tm_pid_$(id -u)"
+
+if [ -f "$PID_FILE" ]; then
+    PID=$(cat "$PID_FILE")
+    kill "$PID"
+    rm "$PID_FILE"
+    rm "$PIPE_PATH"
+    echo "Tidal process $PID stopped."
+else
+    echo "Tidal process not found."
+fi
+</string>
+</dict>
+</plist>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Hush</string>
+	<key>uuid</key>
+	<string>63D9C3D6-5A04-4581-988B-D35070A67897</string>
+	<key>keyEquivalent</key>
+	<string>^@H</string> <key>scope</key>
+	<string>source.tidal</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>command</key>
+	<string>#!/bin/bash
+PIPE_PATH="/tmp/tidal_tm_pipe_$(id -u)"
+if [ ! -p "$PIPE_PATH" ]; then
+    osascript -e 'display notification "Tidal process not running. Please start it first." with title "TidalCycles Error"'
+    exit 1
+fi
+
+# The hush command is also sent inside a block
+echo ":{" &gt; "$PIPE_PATH"
+echo "hush" &gt; "$PIPE_PATH"
+echo ":}" &gt; "$PIPE_PATH"
+</string>
+</dict>
+</plist>

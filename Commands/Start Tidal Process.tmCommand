@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Start Tidal Process</string>
+	<key>uuid</key>
+	<string>A0EFE414-A3D8-4554-B52A-60FF493D144A</string>
+	<key>scope</key>
+	<string>source.tidal</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>command</key>
+	<string>#!/bin/bash
+# Get user-specific paths for the pipe and PID file
+PIPE_PATH="/tmp/tidal_tm_pipe_$(id -u)"
+PID_FILE="/tmp/tidal_tm_pid_$(id -u)"
+
+# Check if process is already running
+if [ -f "$PID_FILE" ]; then
+    echo "&lt;h3&gt;Tidal Process Already Running&lt;/h3&gt;"
+    echo "PID: $(cat $PID_FILE). Use 'Stop Tidal Process' to terminate it."
+    exit 1
+fi
+
+# Create the named pipe (FIFO)
+mkfifo "$PIPE_PATH"
+
+# Determine which ghci command to use based on TextMate Variables
+GHC_CMD="${TM_TIDAL_GHCIPATH:-ghci}"
+if [[ "${TM_TIDAL_USE_STACK}" == "true" ]]; then
+    GHC_CMD="stack ghci"
+fi
+
+echo "&lt;h3&gt;Starting Tidal...&lt;/h3&gt;"
+echo "Using command: &lt;code&gt;$GHC_CMD&lt;/code&gt;&lt;br&gt;"
+
+# Launch GHCi in the background, reading from our pipe
+# Output is silenced for a cleaner experience, but can be logged if needed
+eval "$GHC_CMD" &lt; "$PIPE_PATH" &gt; /dev/null 2&gt;&amp;1 &amp;
+
+# Store the Process ID
+echo $! &gt; "$PID_FILE"
+echo "Process started with PID $(cat $PID_FILE).&lt;br&gt;"
+
+# --- BOOT SEQUENCE ---
+# Function to send a command to the running ghci process
+function send_to_tidal() {
+    echo "$1" &gt; "$PIPE_PATH"
+}
+
+# Use custom boot file if TM_TIDAL_BOOT_PATH is set
+if [ -n "$TM_TIDAL_BOOT_PATH" ] &amp;&amp; [ -f "$TM_TIDAL_BOOT_PATH" ]; then
+    echo "Loading boot file from: &lt;code&gt;$TM_TIDAL_BOOT_PATH&lt;/code&gt;"
+    while IFS= read -r line; do
+        send_to_tidal "$line"
+    done &lt; "$TM_TIDAL_BOOT_PATH"
+else
+    # Default boot commands (from the VSCode extension source)
+    echo "Loading default boot sequence."
+    send_to_tidal ':set -XOverloadedStrings'
+    send_to_tidal ':set prompt ""'
+    send_to_tidal ':set prompt-cont ""'
+    send_to_tidal 'import Sound.Tidal.Context'
+    send_to_tidal 'tidal &lt;- startTidal (superdirtTarget {oLatency = 0.1, oAddress = "127.0.0.1", oPort = 57120}) (defaultConfig {cFrameTimespan = 1/20})'
+    send_to_tidal 'let p = streamReplace tidal'
+    send_to_tidal 'let hush = streamHush tidal'
+    send_to_tidal 'let d1 = p 1'
+    send_to_tidal 'let d2 = p 2'
+    send_to_tidal 'let d3 = p 3'
+    send_to_tidal 'let d4 = p 4'
+    send_to_tidal 'let d5 = p 5'
+    send_to_tidal 'let d6 = p 6'
+    send_to_tidal 'let d7 = p 7'
+    send_to_tidal 'let d8 = p 8'
+    # ...add more default commands from src/tidal.ts if desired...
+    send_to_tidal ':set prompt "tidal&gt; "'
+fi
+
+echo "&lt;h3&gt;Tidal Ready.&lt;/h3&gt;"
+</string>
+</dict>
+</plist>
